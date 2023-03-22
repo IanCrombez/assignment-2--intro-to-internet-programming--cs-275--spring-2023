@@ -50,14 +50,20 @@ async function allBrowsers () {
         `vivaldi`
     ];
 }
+
 let lintCSS = () => {
-    return src(`dev/styles/*.css`)
-        .pipe(CSSLinter(`dev/.stylelintrc.json`));
+    return src(`dev/styles/css/**/*.css`)
+        .pipe(CSSLinter({
+            failAfterError: false,
+            reporters: [
+                {formatter: `string`, console: true}
+            ]
+        }));
 };
 
 let lintJS = () => {
     return src(`dev/scripts/*.js`)
-        .pipe(jsLinter(`.eslintrc.json`))
+        .pipe(jsLinter())
         .pipe(jsLinter.formatEach(`compact`));
 };
 
