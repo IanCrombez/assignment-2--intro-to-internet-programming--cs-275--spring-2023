@@ -51,13 +51,13 @@ async function allBrowsers () {
     ];
 }
 let lintCSS = () => {
-    return src(`dev/styles/css/**/*.css`)
+    return src(`dev/styles/*.css`)
         .pipe(CSSLinter(`dev/.stylelintrc.json`));
 };
 
 let lintJS = () => {
     return src(`dev/scripts/*.js`)
-        .pipe(jsLinter())
+        .pipe(jsLinter(`.eslintrc.json`))
         .pipe(jsLinter.formatEach(`compact`));
 };
 
@@ -111,20 +111,16 @@ let serve = () => {
         server: {
             baseDir: [
                 `temp`,
-                `dev`,
-                `dev/html`
             ]
         }
     });
 
-    watch(`dev/scripts/*.js`, series(lintJS, transpileJSForDev))
+    watch(`dev/js/*.js`, series(lintJS, transpileJSForDev))
         .on(`change`, reload);
 
-    watch(`dev/styles/scss/**/*.scss`, compileCSSForDev)
+    watch(`dev/styles/*.css`, compileCSSForDev)
         .on(`change`, reload);
 
-    watch(`dev/img/**/*`)
-        .on(`change`, reload);
 };
 
 let compileCSSForDev = () => {
@@ -135,7 +131,16 @@ let compileCSSForDev = () => {
         }).on(`error`, sass.logError))
         .pipe(dest(`temp/styles`));
 };
-
+let copyUnprocessedAssetsForDev = () => {
+    return src([
+        `img*/*.jpg`,       // Source all jpg images,
+        `img*/*.svg`,       // and all svg images,
+        `json*/*.json`,     // and all .json,
+        `styles*/*.css`,    // and all .css,
+        `index.html`        // and index.html
+    ], {dot: true})
+        .pipe(dest(`temp`));
+};
 
 exports.brave = series(brave, serve);
 exports.chrome = series(chrome, serve);
@@ -160,6 +165,8 @@ exports.default = series(
     lintCSS,
     lintJS,
     transpileJSForDev,
+    copyUnprocessedAssetsForDev,
+    serve
 
 );
 //prod
