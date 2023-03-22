@@ -115,10 +115,10 @@ let serve = () => {
         }
     });
 
-    watch(`dev/js/*.js`, series(lintJS, transpileJSForDev))
+    watch(`js/*.js`, series(lintJS, transpileJSForDev))
         .on(`change`, reload);
 
-    watch(`dev/styles/*.css`, compileCSSForDev)
+    watch(`styles/*.css`, series(lintCSS, copyUnprocessedAssetsForDev))
         .on(`change`, reload);
 
 };
