@@ -1,4 +1,5 @@
-[
+slides({
+  "slide": [
   {
     "artist": "Dawn of Midi",
     "album": "Dysnomia",
@@ -72,3 +73,4 @@
     }
   }
 ]
+});
