@@ -52,7 +52,7 @@ async function allBrowsers () {
 }
 
 let lintCSS = () => {
-    return src(`dev/styles/css/**/*.css`)
+    return src(`styles/css/**/*.css`)
         .pipe(CSSLinter({
             failAfterError: false,
             reporters: [
@@ -62,25 +62,25 @@ let lintCSS = () => {
 };
 
 let lintJS = () => {
-    return src(`dev/scripts/*.js`)
+    return src(`scripts/*.js`)
         .pipe(jsLinter())
         .pipe(jsLinter.formatEach(`compact`));
 };
 
 let transpileJSForDev = () => {
-    return src(`dev/scripts/*.js`)
+    return src(`js/*.js`)
         .pipe(babel())
-        .pipe(dest(`temp/scripts`));
+        .pipe(dest(`temp/js`));
 };
 
 let compressHTML = () => {
-    return src([`dev/html/*.html`,`dev/html/**/*.html`])
+    return src([`*.html`])
         .pipe(htmlCompressor({collapseWhitespace: true}))
         .pipe(dest(`prod`));
 };
 
 let compileCSSForProd = () => {
-    return src(`dev/styles/scss/main.scss`)
+    return src(`styles/main.css`)
         .pipe(sass.sync({
             outputStyle: `compressed`,
             precision: 10
@@ -89,22 +89,18 @@ let compileCSSForProd = () => {
 };
 
 let transpileJSForProd = () => {
-    return src(`dev/scripts/*.js`)
+    return src(`js/*.js`)
         .pipe(babel())
         .pipe(jsCompressor())
-        .pipe(dest(`prod/scripts`));
+        .pipe(dest(`prod/js`));
 };
 
 let copyUnprocessedAssetsForProd = () => {
     return src([
-        `dev/*.*`,       // Source all files,
-        `dev/**`,        // and all folders,
-        `!dev/html/`,    // but not the HTML folder
-        `!dev/html/*.*`, // or any files in it
-        `!dev/html/**`,  // or any sub folders;
-        `!dev/img/`,     // ignore images;
-        `!dev/**/*.js`,  // ignore JS;
-        `!dev/styles/**` // and, ignore Sass/CSS.
+        `img*/*.jpg`,       // Source all jpg images,
+        `img*/*.svg`,       // and all svg images,
+        `json*/*.json`,     // and all .json,
+        `styles*/reset.css`,    // and the one .css,
     ], {dot: true})
         .pipe(dest(`prod`));
 };
